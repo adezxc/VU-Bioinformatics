@@ -4,39 +4,49 @@ use strict;
 use warnings;
 
 my @words = @ARGV;
-my $length = scalar(@words);
-my $longest = 0;git
+my $word_count = scalar(@words);
+my $longest_word = 0;
+my (%occurence_table, @unique_word_order);
 
-print $length,"\n";
+# Sentence wordcount
+print $word_count,"\n";
 
-for (my $i = $length-1; $i >= 0; $i--) {
+# Reversed sentence
+for (my $i = $word_count-1; $i >= 0; $i--) {
     print $words[$i], " ";
 }
 print "\n";
 
-my %table;
-my @frequencyTable;
-my @frequency;
 
-for (my $i = 0; $i < $length; $i++) {
 
+for (my $i = 0; $i < $word_count; $i++) {
+    # Every second word
     print $words[$i], " " if $i % 2 == 0;
 
-    unless (exists $table{$words[$i]}) { 
-        push(@frequencyTable, $words[$i]);
-        push(@frequency, 1);
-        $table{$words[$i]} = 1;
+    
+    # Creating a hash and array of unique words.
+    # Array is used for the purpose of saving the occurence order of the words,
+    # while the hash serves as a structure to increment the word occurence by value.
+    unless (exists $occurence_table{$words[$i]}) { 
+        $occurence_table{ $words[$i] } = 1;
+        push (@unique_word_order, $words[$i])
     } else {
-        $table{$words[$i]}++;
+        $occurence_table{ $words[$i] }++;
     }
 
-    $longest = length($words[$i]) if length($words[$i]) > $longest;
+    # Find longest word
+    $longest_word = $words[$i] if length( $words[$i] ) > length($longest_word);
 }
 print "\n";
 
-for (my $i = 0; $i < scalar(@frequencyTable); $i++)
+#Print out the unique words and their occurences
+for (my $i = 0; $i < scalar(%occurence_table); $i++)
 {
-  print $frequencyTable[$i], " ", $frequency[$i], "\n";
+   print $unique_word_order[$i], " ", 
+   $occurence_table{ $unique_word_order[$i] },"\n";
 }
 
-print $longest, "\n";
+#Print out all the longest words in the input sentence
+for (@words) {
+    print $_," " if length($_) == length($longest_word)
+}
