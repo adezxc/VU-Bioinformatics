@@ -17,13 +17,10 @@ for (my $i = $word_count-1; $i >= 0; $i--) {
 }
 print "\n";
 
-
-
 for (my $i = 0; $i < $word_count; $i++) {
     # Every second word
     print $words[$i], " " if $i % 2 == 0;
 
-    
     # Creating a hash and array of unique words.
     # Array is used for the purpose of saving the occurence order of the words,
     # while the hash serves as a structure to increment the word occurence by value.
@@ -50,3 +47,4 @@ for (my $i = 0; $i < scalar(%occurence_table); $i++)
 for (@words) {
     print $_," " if length($_) == length($longest_word)
 }
+print "\n";
