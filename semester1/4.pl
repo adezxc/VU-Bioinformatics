@@ -24,18 +24,18 @@ for (@elements) {
 my $count = scalar(@symbols);
 
 for (@symbols) {
-    if ( !exists( $symbolFrequency{$_} ) ) {
-        $symbolFrequency{$_} = 1;
+    if ( !exists( $symbolFrequency{ lc $_ } ) ) {
+        $symbolFrequency{ lc $_ } = 1;
     }
     else {
-        $symbolFrequency{$_}++;
+        $symbolFrequency{ lc $_ }++;
     }
 }
 
 print join( ' ', @firstLetterWords );
 
-my @keys =
-  sort { $symbolFrequency{$b} <=> $symbolFrequency{$a} } keys %symbolFrequency;
+my @keys = sort { $symbolFrequency{$b} <=> $symbolFrequency{$a} || $a cmp $b }
+  keys %symbolFrequency;
 my @vals = @symbolFrequency{@keys};
 
 for (@keys) {
