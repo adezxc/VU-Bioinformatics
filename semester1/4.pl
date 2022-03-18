@@ -3,13 +3,10 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
-
 my $firstLetter = "a";
 my @elements    = @ARGV;
 my @firstLetterWords;
 my @symbols;
-my @word = ();
 my %symbolFrequency;
 
 for (@elements) {
@@ -24,11 +21,11 @@ for (@elements) {
 my $count = scalar(@symbols);
 
 for (@symbols) {
-    if ( !exists( $symbolFrequency{ lc $_ } ) ) {
-        $symbolFrequency{ lc $_ } = 1;
+    if ( !exists( $symbolFrequency{ $_ } ) ) {
+        $symbolFrequency{ $_ } = 1;
     }
     else {
-        $symbolFrequency{ lc $_ }++;
+        $symbolFrequency{ $_ }++;
     }
 }
 
