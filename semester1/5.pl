@@ -33,6 +33,7 @@ for (@arguments) {
                 $results[ $. - 1 ] *= $line;
             }
             else {
+                chomp($line);
                 push( @results, $line );
             }
             $line_count++;

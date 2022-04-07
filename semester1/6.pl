@@ -4,12 +4,19 @@ use strict;
 use warnings;
 
 my @input;
-my $line;
-my %complement = (
+my $line          = '';
+my $complementary = 1;
+my %complement    = (
     'A' => 'T',
     'T' => 'A',
     'G' => 'C',
     'C' => 'G',
+);
+my %init = (
+    'A' => 1.03,
+    'T' => 1.03,
+    'G' => 0.98,
+    'C' => 0.98
 );
 my %values = (
     'AA' => -1.00,
@@ -24,29 +31,78 @@ my %values = (
     'GG' => -1.84,
 );
 
-
 if ( scalar(@ARGV) != 0 ) {
     @input = @ARGV;
-} else {
+}
+else {
     print "Enter FASTA files that you want to analyze \n";
     print "<Ctrl>-D to terminate \n";
     @input = <STDIN>;
+    
 }
-
 chomp @input;
 
-for ( @input ) {
-    open( my $input, '<', $_ ) or die $0, ':', $_, ':failed to open file:';
-    for ( <> ) {
-        $line = $_;
-        if ((substr $line, 0, 1) eq '>') {
-            print $line;
-        } else {
-            $line += $_;
+for (@input) {
+    open( my $file, '<', $_ ) or die $0, ':', $_, ':failed to open file:';
+    for (<$file>) {
+        chomp $_;
+        if ( ( substr $_, 0, 1 ) eq '>' ) {
+            if ( $line ne '' ) {
+                my $sum = 0;
+                my @nucleotides = split( //, $line );
+                if ( scalar(@nucleotides) % 2 != 0 ) {
+                    $complementary = 0;
+                }
+                else {
+                    for (
+                        my $i = 0 ;
+                        $i < ( scalar(@nucleotides) / 2 ) - 1 ;
+                        $i++
+                      )
+                    {
+                        if ( $nucleotides[$i] eq
+                            $complement{ $nucleotides[ -1 - $i ] } )
+                        {
+                            next;
+                        }
+                        else {
+                            $complementary = 0;
+                        }
+                    }
+                }
+                for ( my $i = 0 ; $i < scalar(@nucleotides) - 1 ; $i++ ) {
+                    my $nucleopair = $nucleotides[$i] . $nucleotides[ $i + 1 ];
+                    if ( exists( $values{$nucleopair} ) ) {
+                        $sum += $values{$nucleopair};
+                    }
+                    else {
+                        $nucleopair =~ tr/ACGT/TGCA/;
+                        if ( exists( $values{$nucleopair} ) ) {
+                            $sum += $values{$nucleopair};
+                        }
+                        else {
+                            $nucleopair = reverse($nucleopair);
+                            if ( exists( $values{$nucleopair} ) ) {
+                                $sum += $values{$nucleopair};
+                            }
+                        }
+                    }
+                }
+                $sum +=
+                  $init{ $nucleotides[0] } +
+                  $init{ $nucleotides[-1] } +
+                  0.43 * $complementary;
+                print $sum, "\n";
+            }
+
+            print $_, "\n";
+            $line = '';
+        }
+        else {
+            $line = $line . $_;
             next;
         }
     }
 
-    close $input;
+    close $file;
 }
-
